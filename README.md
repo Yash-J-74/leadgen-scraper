@@ -23,7 +23,10 @@ cd leadgen-scraper
 ```bash
 python __init__.py
 ```
-The virtual environment must be running now
+- The virtual environment must be running now. If not, activate it using the command:
+```bash
+.\venv\Scripts\activate
+```
 - Update the .env file with the API URL (usually http://127.0.0.1:8000).
 - Run the application using the command:
 ```bash
@@ -31,3 +34,9 @@ python run_app.py
 ```
 
 - To close the app, press Ctrl+C in the terminal.
+
+- To deactivate the virtual environment, run:
+```bash
+# in root directory
+deactivate
+```
