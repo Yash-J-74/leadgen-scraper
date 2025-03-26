@@ -14,6 +14,10 @@ requirements_file = os.path.join(os.getcwd(), 'requirements.txt')
 if os.path.exists(requirements_file):
     print("Installing required modules...")
     subprocess.run([pip_path, 'install', '-r', requirements_file])
+    
+    # Install Playwright
+    print("Installing Playwright...")
+    subprocess.run(['playwright', 'install'])
 else:
     print("No requirements.txt found. Skipping module installation.")
 
