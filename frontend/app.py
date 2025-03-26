@@ -53,7 +53,7 @@ with tab1:
         if st.button("Fetch Details", key="fetch_single"):
             if query and location:
                 with st.spinner("Fetching business details..."):
-                    response = requests.get(f"{BASE_URL}/business-details",
+                    response = requests.get(f"{BASE_URL}/api/business-details",
                                             params={"query": query, "location": location})
                     if response.status_code == 200:
                         st.success("Business details retrieved successfully!")
@@ -87,7 +87,7 @@ with tab2:
         if st.button("Fetch Businesses", key="fetch_multiple"):
             if query and location:
                 with st.spinner("Fetching businesses by category..."):
-                    response = requests.get(f"{BASE_URL}/businesses-by-category",
+                    response = requests.get(f"{BASE_URL}/api/businesses-by-category",
                                             params={"query": query, "location": location})
                     if response.status_code == 200:
                         st.success(f"Found {len(response.json()['data'])} businesses!")
@@ -123,7 +123,7 @@ with tab3:
         if st.button("Find Competitors", key="fetch_competitors"):
             if query and location:
                 with st.spinner("Fetching competitors..."):
-                    response = requests.get(f"{BASE_URL}/get-competitors",
+                    response = requests.get(f"{BASE_URL}/api/get-competitors",
                                             params={"query": query, "location": location})
                     if response.status_code == 200:
                         st.success(f"Found {len(response.json()['data'])} competitors!")
