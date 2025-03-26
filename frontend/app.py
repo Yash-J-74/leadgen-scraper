@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 from ui_components import header, display_single_business, display_business_list, instructions
 
-
+load_dotenv()
 BASE_URL = os.getenv("API_BASE_URL")
 
 # Streamlit app configuration
