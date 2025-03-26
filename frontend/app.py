@@ -1,8 +1,19 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import requests
 from dotenv import load_dotenv
 import os
 from ui_components import header, display_single_business, display_business_list, instructions
+
+def redirect_to_competitors(query, location):
+    """
+    Stores the current query and location in session state
+    and triggers a tab switch to 'Find Competitors'.
+    """
+    st.session_state["competitor_query"] = query
+    st.session_state["competitor_location"] = location
+    st.session_state["active_tab"] = "Find Competitors"  # Store the target tab
+    st.rerun()
 
 load_dotenv()
 BASE_URL = os.getenv("API_BASE_URL")
@@ -13,8 +24,23 @@ st.set_page_config(page_title="LeadGen Scraper", layout="wide")
 # App title
 header("LeadGen Scraper", "Effortlessly fetch business details, similar businesses, and competitors.")
 
-# Tabs for different functionalities
-tab1, tab2, tab3 = st.tabs(["Single Business", "Multiple Businesses", "Find Competitors"])
+tab_labels = ["Single Business", "Multiple Businesses", "Find Competitors"]
+selected_tab = st.session_state.get("active_tab", "Single Business")
+
+tab1, tab2, tab3 = st.tabs(tab_labels)
+
+# JavaScript to switch tabs
+js_code = f"""
+<script>
+    var tabs = window.parent.document.querySelectorAll('[data-testid="stTab"]');
+    var tabNames = {tab_labels};  
+    var targetTab = tabNames.indexOf("{selected_tab}");
+    if (targetTab !== -1) {{
+        tabs[targetTab].click();
+    }}
+</script>
+"""
+components.html(js_code, height=0)
 
 with tab1:
     col1, col2 = st.columns([1, 2])
@@ -34,13 +60,16 @@ with tab1:
                         st.session_state["single_business"] = response.json()["data"]
                     else:
                         st.error(f"Error: {response.json()['detail']}")
-
+                        
     with col2:
         output_single = st.empty()  # Placeholder for instructions or data
 
         if "single_business" in st.session_state:
-            output_single.empty()  # Remove instruction text when data is available
+            output_single.empty()
             display_single_business(st.session_state["single_business"])
+            with col1:
+                if st.button("Find Competitors?", key="redirect_competitors"):
+                    redirect_to_competitors(query, location)
         else:
             output_single.markdown(
                 f"ℹ️ **{instructions[0]}**",
@@ -84,6 +113,10 @@ with tab3:
 
     with col1:
         st.subheader("Find Competitors")
+        
+        default_query = st.session_state.get("competitor_query", "")
+        default_location = st.session_state.get("competitor_location", "")
+        
         query = st.text_input("Enter a company name", key="competitor_query")
         location = st.text_input("Enter the location", key="competitor_location")
 
