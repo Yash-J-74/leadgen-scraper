@@ -7,9 +7,8 @@ The **LeadGen Scraper Tool** is a web scraping application that extracts busines
 - Extracts business details from Google Maps
 - Identifies competitors based on business type and location
 - Searches for multiple businesses of the same type within a specified area
-- Provides structured and filtered data for easy use in sales workflows
 
-## Technologies Used
+## Tech Stack Used
 - **Python Playwright** - Web scraping
 - **FastAPI** - Backend API
 - **Streamlit** - Frontend UI
@@ -24,6 +23,7 @@ cd leadgen-scraper
 ```bash
 python __init__.py
 ```
+The virtual environment must be running now
 - Update the .env file with the API URL (usually http://127.0.0.1:8000).
 - Run the application using the command:
 ```bash
