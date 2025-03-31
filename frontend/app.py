@@ -24,10 +24,10 @@ st.set_page_config(page_title="LeadGen Scraper", layout="wide")
 # App title
 header("LeadGen Scraper", "Effortlessly fetch business details, similar businesses, and competitors.")
 
-tab_labels = ["Single Business", "Multiple Businesses", "Find Competitors"]
+tab_labels = ["Single Business", "Multiple Businesses", "Find Competitors", "Download Financial Data"]
 selected_tab = st.session_state.get("active_tab", "Single Business")
 
-tab1, tab2, tab3 = st.tabs(tab_labels)
+tab1, tab2, tab3, tab4 = st.tabs(tab_labels)
 
 # JavaScript to switch tabs
 js_code = f"""
@@ -72,9 +72,7 @@ with tab1:
                     redirect_to_competitors(query, location)
         else:
             output_single.markdown(
-                f"ℹ️ **{instructions[0]}**",
-                unsafe_allow_html=True,
-            )
+                f"ℹ️ **{instructions[0]}**", unsafe_allow_html=True)
 
 with tab2:
     col1, col2 = st.columns([1, 2])
@@ -104,9 +102,7 @@ with tab2:
                 display_business_list(st.session_state["multiple_businesses"])
         else:
             output_multi.markdown(
-                f"ℹ️ **{instructions[1]}**",
-                unsafe_allow_html=True,
-            )
+                f"ℹ️ **{instructions[1]}**", unsafe_allow_html=True)
 
 with tab3:
     col1, col2 = st.columns([1, 2])
@@ -140,6 +136,39 @@ with tab3:
                 display_business_list(st.session_state["competitors"])
         else:
             output_comp.markdown(
-                f"ℹ️ **{instructions[2]}**",
-                unsafe_allow_html=True,
-            )
+                f"ℹ️ **{instructions[2]}**", unsafe_allow_html=True)
+            
+with tab4:
+    col1, col2 = st.columns([1, 2])
+
+    with col1:
+        st.subheader("Download Financial Data")
+        
+        # Input field for the company name
+        company = st.text_input("Enter a publicly listed company name", key="financial_data_query", placeholder="e.g., Nvidia")
+
+        # Button to trigger the API call
+        if st.button("Download Financial Data", key="download_financial_data"):
+            if company:
+                with st.spinner("Fetching financial data..."):
+                    try:
+                        # Call the backend API
+                        response = requests.get(f"{BASE_URL}/api/download-financial-data", params={"company": company})
+                        if response.status_code == 200:
+                            # Use the response content directly in the download button
+                            st.success("Financial data fetched successfully! Click the button below to download.")
+                            st.download_button(
+                                label="Download File",
+                                data=response.content,
+                                file_name=f"financial_statements_{company}.xlsx",
+                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            )
+                        else:
+                            st.error(f"Error: {response.json().get('detail', 'Unknown error occurred')}")
+                    except requests.exceptions.RequestException as e:
+                        st.error(f"Error: {e}")
+            else:
+                st.warning("Please enter a company name.")
+                
+    with col2:
+        instructions = st.markdown(f"ℹ️{instructions[3]}", unsafe_allow_html=True)
